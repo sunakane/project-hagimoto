@@ -28,18 +28,171 @@
 <script src="js/plugins.js"></script>
 <script src="js/main.js"></script>
 
-<ul>
-  <li><span><a href="img/mission1_copy_and_paste.mp4" data-fancybox><img src="img/dao-fu.PNG"></a></span></li>
-  <li><span><img src="img/prof_ika.png"></span></li>
-  <li><span><img src="img/prof_seki.png"></span></li>
-  <li><span><img src="img/sugimoto.png"></span></li>
-  <li><span><img src="img/04_01.jpg"></span></li>
-  <li><span><img src="img/04_02.jpg"></span></li>
-  <li><span><img src="img/04_01.jpg"></span></li>
-  <li><span><img src="img/04_02.jpg"></span></li>
-  <li><span><img src="img/04_01.jpg"></span></li>
-  <li><span><img src="img/04_02.jpg"></span></li>
-</ul>
+
+<section id="body">
+  <ul id="messages">
+    <li><span><a href="img/mission1_copy_and_paste.mp4" data-fancybox><img src="img/dao-fu.PNG"></a></span></li>
+    <li><span><img src="img/prof_ika.png"></span></li>
+    <li><span><img src="img/prof_seki.png"></span></li>
+    <li><span><img src="img/sugimoto.png"></span></li>
+    <li><span><img src="img/04_01.jpg"></span></li>
+    <li><span><img src="img/04_02.jpg"></span></li>
+    <li><span><img src="img/04_01.jpg"></span></li>
+    <li><span><img src="img/04_02.jpg"></span></li>
+    <li><span><img src="img/04_01.jpg"></span></li>
+    <li><span><img src="img/04_02.jpg"></span></li>
+    <li><span><img src="img/04_02.jpg"></span></li>
+    <li><span><img src="img/04_02.jpg"></span></li>
+  </ul>
+</section>
+<canvas id="canv"></canvas>
+<script>
+  // ここをパクりました
+  // https://www.go-next.co.jp/blog/web/20094/#html
+
+  //------------------------------
+  //桜吹雪
+  //------------------------------
+
+  // forked from kanariia1's "forked: 桜吹雪" http://jsdo.it/kanariia1/vOcE
+  // forked from njf's "桜吹雪" http://jsdo.it/njf/alFS
+  function Particle() {
+  }
+
+  Particle.prototype.x = 0;
+  Particle.prototype.y = 0;
+  Particle.prototype.velX = 0;
+  Particle.prototype.velY = 0;
+  Particle.prototype.rad = 0;
+  Particle.prototype.w = 0;
+  Particle.prototype.time = 0;
+  Particle.prototype.zrot = 0;
+  Particle.prototype.zrotW = 0;
+  Particle.prototype.scale = 1;
+
+  var stageX = 445;
+  var stageY = 445;
+
+  var mainCanvasContext;
+
+  var particles = [];
+
+  var mouseX = 0;
+  var mouseY = 0;
+
+  var windVelX = 0;
+  var windVelY = 0;
+
+  var image = new Image();
+  image.src = "img/sakura_hana.png";//花びら
+  function initParitcle(initP) {
+    initP.w = 0.4 * (0.5 - Math.random());
+    initP.rad = Math.PI * Math.random();
+    initP.velY = Math.random() * 3 + 7;
+    initP.velX = (0.5 - Math.random()) * 10;
+    initP.zrot = Math.PI * Math.random();
+    initP.zrotW = (0.5 - Math.random()) / 10;
+    initP.scale = (1.1 - Math.random()) * 5.5;//花びらの大きさ｜デフォ4.5
+    initP.time = 0;
+
+  }
+
+  function init() {
+    for (var i = 0; i < 50; i++) {//花びらの数
+      var p = new Particle();
+      initParitcle(p);
+      p.y = (1.1 - 1.2 * Math.random()) * stageY;
+      p.x = Math.random() * stageX;
+
+      particles.push(p);
+    }
+  }
+
+
+  function sortParticle(p1, p2) {
+    return (p1.scale - p2.scale);
+  }
+
+
+  function timerFunc() {
+    mainCanvasContext.setTransform(1, 0, 0, 1, 0, 0);
+    //mainCanvasContext.fillStyle = 'rgba(86, 14, 17, 0.4)';
+    mainCanvasContext.fillRect(0, 0, stageX, stageY);
+    mainCanvasContext.clearRect(0, 0, stageX, stageY);
+    particles.sort(sortParticle);
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      var rad = p.rad;
+      mainCanvasContext.setTransform(Math.cos(rad), Math.sin(rad), -Math.sin(rad), Math.cos(rad), p.x + image.width * 0.5, p.y + image.height * 0.5);
+      var s = Math.sin(p.zrot);
+      var c = Math.cos(p.zrot);
+      mainCanvasContext.scale(p.scale * s, p.scale * c);
+      mainCanvasContext.drawImage(image,
+        0, 0,
+        image.width, image.height,
+        -image.width * 0.5, -image.height * 0.5,
+        image.width, image.height
+      );
+      p.time++;
+      p.x += (p.velX + windVelX) * (p.scale / 3);
+      p.y += (p.velY + windVelY) * (Math.abs(p.scale) / 3);
+      p.rad += p.w;
+      p.zrot += p.zrotW;
+      if (p.rad > Math.PI) {
+        p.rad = -Math.PI;
+      } else if (p.rad < -Math.PI) {
+        p.rad = Math.PI;
+      }
+      var ts = image.width * Math.abs(p.scale);
+      if (p.y > stageY + ts || p.x < -ts || p.x > ts + stageX) {
+        initParitcle(p);
+        ts = image.width * Math.abs(p.scale);
+        if (p.y > stageY + ts) {
+          p.y = -ts;
+          p.x = Math.random() * stageX;
+        } else {
+          if ((p.velX + windVelX) * (p.scale / 3) > 0) {
+            p.x = -ts;
+          } else {
+            p.x = stageX + ts;
+          }
+        }
+
+      }
+
+    }
+
+  }
+
+
+  window.onload = () => {
+    //レイヤー3（桜吹雪）
+    let canvas3 = document.getElementById('canv');
+
+    mainCanvasContext = canvas3.getContext("2d");
+
+    var timer = setInterval(timerFunc, 30);
+    canvas3.width = 1800;
+    canvas3.height = 1600;
+
+    canvas3.style.position = "absolute";
+    canvas3.style.top = "0";
+    canvas3.style.left = "0";
+    canvas3.style.zIndex = "-1";
+
+    stageX = canvas3.width;
+    stageY = canvas3.height;
+    init();
+
+    canvas3.onmousemove = function (e) {//マウスの動き
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      windVelX = (0.5 - mouseX / stageX) * 35;
+      windVelY = (0.6 - mouseY / stageY) * 15;
+    };
+  };
+
+</script>
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="./js/jquery.fancybox.min.js"></script>

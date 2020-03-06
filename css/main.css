@@ -265,6 +265,20 @@ html {
 
 body {
   position: relative;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  z-index: 1;
+}
+
+body > #wrapper {
+  overflow: auto;
+  position: fixed;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
 }
 
 .cont {
@@ -342,6 +356,8 @@ li span img{
   height: auto;
   max-height: 100%;
 }
+
+
 
 
 /*.end {*/
