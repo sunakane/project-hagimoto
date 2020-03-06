@@ -46,6 +46,10 @@
   </ul>
 </section>
 <canvas id="canv"></canvas>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="./js/jquery.fancybox.min.js"></script>
+
 <script>
   // ここをパクりました
   // https://www.go-next.co.jp/blog/web/20094/#html
@@ -170,9 +174,7 @@
     let canvas3 = document.getElementById('canv');
 
     mainCanvasContext = canvas3.getContext("2d");
-    console.log("test");
 
-    var timer = setInterval(timerFunc, 30);
     canvas3.width = 1800;
     canvas3.height = 1600;
 
@@ -185,6 +187,7 @@
     stageY = canvas3.height;
     init();
 
+    var timer = setInterval(timerFunc, 30);
     canvas3.onmousemove = function (e) {//マウスの動き
       mouseX = e.clientX;
       mouseY = e.clientY;
@@ -195,8 +198,6 @@
 
 </script>
 
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script src="./js/jquery.fancybox.min.js"></script>
 </body>
 
 </html>
